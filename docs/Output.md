@@ -16,10 +16,11 @@ Fuzzy Search has a variety of analyses it can perform, generating the following 
 
 ## Text
 
-> [!NOTE] All Output Text Files Use Markdown Formatting:
-> Ctrl-F and search for "###" to rapidly page through sections!
-> 
-> To access richer markdown functionality (such as outlines and foldable headings), change the file extension from `.txt` to `.md` (`.txt` is the default because some files are large enough that they lag markdown processors).
+**All Output Text Files Use Markdown Formatting**
+
+Use `Ctrl-F` and search for "###" headings to rapidly page through sections!
+
+To access richer markdown functionality (such as outlines and foldable headings), change the file extension from `.txt` to `.md` (`.txt` is the default because some files are large enough that they lag markdown processors).
 
 ### Post Data
 **Argument:** `--posts`
@@ -34,6 +35,7 @@ Use arguments to add:
 File begins with a header describing statistics for all posts in the search.
 
 Example header:
+
 ```text
 #### Search Statistics:
 Total Posts: 196
@@ -50,6 +52,7 @@ Each post is given it's own section, based on the sidebar when viewing an indivi
 - Categories with individual tags
 
 Example post:
+
 ```text
 #### 3318870
 37 62 C7 S
@@ -79,17 +82,15 @@ General
 ### Post URLs
 **Argument:** `--url`
 
-> [!NOTE] URL Mode
-> Use command line arguments to choose between the three available URL formats:
-> - `--url_mode md5`
-> - `--url_mode url`
-> - `--url_mode full`
+Use command line arguments to choose between the three available URL formats:
+- `--url_mode md5`
+- `--url_mode url`
+- `--url_mode full`
 
 #### md5
 - Outputs the md5 hash
 - Probably the most useful if using external downloaders
 
-Example of 3 posts:
 ```text
 (...)68a28f
 (...)f7137b
@@ -99,7 +100,6 @@ Example of 3 posts:
 #### url
 - Outputs the static URL with parsed md5 hash
 
-Example of 3 posts:
 ```text
 https://static1(...)68a28f.png
 https://static1(...)f7137b.png
@@ -110,7 +110,6 @@ https://static1(...)5dd36a.webm
 - Tab-delimited
 - Format used by Fuzzy Search's built-in downloader
 
-Example of 3 posts:
 ```text
 107432.png   https://static1(...)68a28f.png  0.8
 607088.png   https://static1(...)f7137b.png  2.2
@@ -133,6 +132,7 @@ A simple count of how many posts in the search contain a given tag.
 	- Lore
 
 Example:
+
 ```text
 ### Character
 196 loona_(helluva_boss)
@@ -156,6 +156,7 @@ A simple count (or weight if applicable) of how many posts in the search contain
 File begins with a header describing statistics for all posts in the search, split by custom category:
 
 Example header:
+
 ```text
 ### General Stats:
 Total Posts: 196
@@ -168,6 +169,7 @@ Total Tags Per Category:
 Each category is given it's own section, breaking down the tags and counts/weights that contributed to that category's overall total for the searched posts:
 
 Example category section:
+
 ```text
 ### Emotive
 59 smile
@@ -187,14 +189,16 @@ Example category section:
 A ranked list of all unique tags in the searched posts (split by E6 category), ordered chiefly by:
 1. being common in the searched posts
 2. being niche outside the searched posts
+
 See the [recommendation algorithm design](docs/Design.md) for more details.
 
-Key:
-**#set:** Count of posts in the search with this tag.
-**#db:** Count of posts in the database with this tag.
-**%set:** Percentage of posts in the search with this tag.
+**Key:**
+- **#set:** Count of posts in the search with this tag.
+- **#db:** Count of posts in the database with this tag.
+- **%set:** Percentage of posts in the search with this tag.
 
 Example:
+
 ```text
 ### general
 #set|#db    %set| tag
@@ -214,11 +218,13 @@ Example:
 (... plus 9758 other tags found in less than 2% of the searched posts)
 ```
 
-> [!NOTE] Threshold Argument
-> The argument `--rec_tag_threshold` will hide tags that only occur in a small portion of the searched posts.
-> For example, applying `--rec_tag_threshold 40` to the above example will filter out any tags present in less than 40% of the searched posts, resulting in the below output:
-> ```
-> ### general
+#### Threshold Argument
+The argument `--rec_tag_threshold` will hide tags that only occur in a small portion of the searched posts.
+
+For example, applying `--rec_tag_threshold 40` to the above example will filter out any tags present in less than 40% of the searched posts, resulting in the below output:
+
+```
+### general
 #set|#db    %set| tag
  121|32494    61| red_sclera
   93|37640    47| spiked_collar
@@ -226,27 +232,35 @@ Example:
   97|122825   49| spikes
 (...)
 (... plus 21766 other tags found in less than 40% of the searched posts)
-> ```
+```
 
 ## Charts
 
 ### Bar Chart
 **Argument:** `--bar`
+
 **Creation:** One chart per user-defined bar chart tag group in `Settings/Bar Charts`.
+
 **Usage:** Helpful to compare the count of several tags at once (without needing to make additional searches).
 
 Note: Bar charts contain syntax to have a bar correspond with multiple tags and/or to negate tags.
+
 ![Bar chart comparing ratios of various number of characters present.](/images/fs/bar_chart_group.png)
 
 ### Percentile
 **Argument:** `--charts_custom`
+
 **Creation:** One chart per user-defined custom category in `Settings/Custom Categories`.
+
 **Usage:** Helpful to gauge what proportion of posts in a set are highly relevant in regards to some attribute.
+
 **Legend:** Contains the average custom category relevancy per post (1.56 in below example) and total relevancy across all searched posts (7024 in below example).
+
 ![Percentile chart showing ratio of posts that are above a custom category relevancy.](/images/fs/percentile.png)
 
 ### Scatter Plot Post Score
 **Argument:** `--score`
+
 **Visualize:**
 - Post frequency over time
 - Post score over time
@@ -256,14 +270,17 @@ Note: Bar charts contain syntax to have a bar correspond with multiple tags and/
 
 ### Scatter Plot Custom Category Relevancy
 **Argument:** `--charts_custom`
+
 **Creation:** Each post gets a colored point based on the user-defined custom categories in `Settings/Custom Categories`.
+
 **Visualize:**
 - Post Frequency over time
 - Custom Category Relevancy
+
 **Legend:** Contains the average custom category relevancy per post and total across all searched posts.
 
 Categories are ordered by relevancy.
-	Lower-scoring categories are plotted last (i.e. on top of all other categories) in order to prevent them from being covered by the higher scoring categories.
+- Lower-scoring categories are plotted last (i.e. on top of all other categories) in order to prevent them from being covered by the higher scoring categories.
 
 ![Scatter plot plotting post upload date and custom category relevancy.](/images/fs/scatter_custom.png)
 
@@ -277,23 +294,25 @@ Open [Obsidian](https://obsidian.md/):
 2. Open Graph View (on the left side command bar)
 3. Enable Tags (under the Filters tab of the graph view settings)
 
-> [!TIP] Obsidian: Viewing Post Details
-> When viewing posts linked to a tag node, hold the  `control` key when hovering over posts to view the post's details (such as their tags) without leaving the graph view. Enable the "Show more context" option so that simply hovering over posts shows these details.
+**Tip:** Viewing Post Details
+- When viewing posts linked to a tag node, hold the  `control` key when hovering over posts to view the post's details (such as their tags) without leaving the graph view. Enable the "Show more context" option so that simply hovering over posts shows these details.
 
 ### Uses of Obsidian Graphs
 - See connections between tags
 - Visualize overly-general tags as dense clusters
 - Visualize overly-specific tags as dead-end leaf nodes
 - Investigate posts of interest
-	- Pull up the associated Post Data entry without needing to Ctrl-F a text file
+	- Pull up the associated Post Data entry without needing to `Ctrl-F` a text file
 - Utilize Obsidian's search filters
 
 Here's a visualization of a tag (`fluffy`, the purple dot) being used as a tag in several posts (white dots):
+
 ![Obsidian's graph view, showing a tag linked to several posts.](/images/fs/obsidian_tag.png)
 
 The graph view can also help visualize clusters of related tags. In this case, a post (`5509923`, the purple dot) is showing a link to each of it's tags (green dots).
 - The large green dots in the center are tags shared by many posts: `fur anthro male female clothing` and so on.
 - The small green dots at the edges of the cluster are only shared by a few posts, indicating they are very niche tags (relative to this search).
+
 ![Obsidian's graph view, visualizing a map of posts and shared tags.](/images/fs/obsidian_post.png)
 
 ---
