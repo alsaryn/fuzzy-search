@@ -190,7 +190,7 @@ A ranked list of all unique tags in the searched posts (split by E6 category), o
 1. being common in the searched posts
 2. being niche outside the searched posts
 
-See the [recommendation algorithm design](docs/Design.md) for more details.
+See the [recommendation algorithm design](Design.md) for more details.
 
 **Key:**
 - **#set:** Count of posts in the search with this tag.

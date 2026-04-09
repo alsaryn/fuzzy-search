@@ -4,6 +4,7 @@ The core tool and name sake of Fuzzy Search is the `--recommended` tool. All it 
 
 Many of Fuzzy Search's other tools supplement `--recommended` to ultimately help users go from "my favorite tag that I've searched to exhaustion" to "a bunch of artists/tags/posts similar to my favorite tag."
 
+---
 ### Example 1: Finding tags similar to your search
 > **Q**: "How can I find more tags like `this_really_cool_tag`?"
 >
@@ -40,7 +41,7 @@ Here's a second example:
 **Highly relevant to what you searched for:**
 - E6's list of tags is consistently dominated by the same few tags (e.g. `fur anthro clothing female male hi_res`), regardless of what you put in the search bar.
 - Fuzzy Search's list of tags are *closely* related to what you searched for.
-	- Curious what is meant by "closely related"? Consider reading the [Design](docs/Design.md) write-up for a description of how Fuzzy Search's rather simplistic recommendation algorithm works!
+	- Curious what is meant by "closely related"? Consider reading the [Design](Design.md) write-up for a description of how Fuzzy Search's rather simplistic recommendation algorithm works!
 
 **Tags split by category:**
 - Makes it easy to find tags of a particular category (such as characters or artists).
@@ -52,6 +53,7 @@ Here's a second example:
 - For performance reasons, E6 only lists tags relevant to the current page of posts--this is usually 75-300 posts.
 - Meanwhile, Fuzzy Search can process millions of posts at a time!
 
+---
 ### Example 2: What's the distribution of genders in `tag`?
 >**Q**: "I'm interested in yoked-up characters, but it depends on the gender..."
 >
@@ -91,8 +93,9 @@ Bar charts also have syntax for a single bar corresponding to multiple tags (`so
 
 ![Bar chart showing ratio of group composition for the uwu tag.](/images/fs/bar_chart_group.png)
 
-To get the same data on E6, each one of these bars represents a unique search. Fuzzy Search get the same data in a single command and even visualizes all those numbers with a bar chart!
+To get the same data on E6, each one of these bars represents a unique search. Meanwhile, Fuzzy Search needs only a single command and even visualizes all those numbers with a bar chart!
 
+---
 ### Example 3: How has the score/posting rate of `tag` changed over time?
 > **Q**: "When did 3D animation pop off?"
 >
@@ -134,6 +137,7 @@ This chart represents about a third of all posts on E6, as of April 2026:
 
 *It seems like post scores have been inflated over time! For more information, look up "E6 inf--*
 
+---
 ### Example 4: What were the most popular characters in `year`?
 >**Q**: "What were the most popular characters in 2025?"
 >
@@ -203,12 +207,13 @@ Note: `_all_posts_`
 Note: `max_posts 6000000`
 - Fuzzy Search has a post limit that will yell at you if you give it massive searches (more than 200 thousand posts). This helps users avoid accidentally using more computational resources than expected. The checks for this limit are over-zealous, and currently don't factor in filtering posts by score or upload date. If you use these filters and predict that a large amount of the posts would be filtered out, you can safely increase the `max_posts` limit even if your computer has relatively low specs.
 
+---
 ### Example 5: What artists have drawn the most of `my_favorite_character`?
 >**Q**: "What artists have drawn the most of my favorite character?"
 >
 >**A**: "Take a look at the `--counts` of those artist tags!"
 
-Wait a moment--you didn't say who your favorite character is! Let me guess...
+Wait a moment--you didn't say who your favorite character is! Eh, let me guess...
 
 **Searched Tags:**  `loona_(helluva_boss)`
 
@@ -266,6 +271,7 @@ This threshold hides any tag that is only present in less than the specified per
 
 Because we want to find similar artist tags, we set the threshold to 0, effectively disabling it. This ensures that all artist tags are listed in the output of `--recommended`.
 
+---
 ### Example 6: What general tags does this `artist` specialize in?
 > **Q**: "I have a list of artists, and I want to figure out what their niche is." 
 >
@@ -273,7 +279,7 @@ Because we want to find similar artist tags, we set the threshold to 0, effectiv
 
 There's two aspects that turn any old tag into a relevant, highly-recommended niche:
 1. That tag is used on many of the posts that came up in your search.
-2) that same tag is rarely used on posts outside of your search.
+2. That same tag is rarely used on posts outside of your search.
 
 `--recommended` weighs both of these properties to display the most relevant tagging niche that artist occupies.
 
@@ -331,6 +337,7 @@ If you want a list of the most popular/common tags for that artist, use the `--c
 8258 looking_at_viewer
 ```
 
+---
 ### Example 7: What other artists are similar to `artist`?
 > **Q**: "I used Fuzzy Search hoping to find other artists similar to my favorite artist. However, no other artist tags are listed with `-recommended`!"
 > 
@@ -391,15 +398,18 @@ This example generated a list of 4,700 artists, with 19,000 posts between them. 
 - The `--recommended` tags are ranked by relevancy to the tags you're searched, so you can start at the top of your list and work your way down.
 
 **What's `rec_tag_threshold 0` doing, and why wasn't it used in the arguments of the first search?**
+
 This threshold hides any tag that is only present in less than the specified percent of the searched posts.
 - This is helpful for categories such as general, species, and copyright. Without it, the list of recommended tags would be filled with super specific tags. They often get a high ranking in Fuzzy Search because they happen to have all of their posts in whatever you searched for--which also means these tags are redundant because all their posts showed up in your original search. So, it's usually convenient to hide such tags by applying this threshold.
 - However, this same threshold ends up being a little too aggressive to tags that simply aren't as populated--like most artist and character tags--and hides them.
+
 Because we want to find similar artist tags, we set the threshold to 0, effectively disabling it. This ensures that all artist tags are listed in the output of `--recommended`.
 
+---
 ### Example 8: Sort posts by number of ~tags
-> **Q**: "I want to search `~fluffy ~uwu ~heart_gesture` and find the posts with ***MAXIMUM CUTENESS***!"
+> **Q**: "I want to search `~fluffy ~uwu ~heart_gesture` and find the posts with ***MAXIMUM CUTENESS!***"
 > 
-> **A**: Here's how to `--order` posts from most ~tags to least ~tags!
+> **A**: "Here's how to `--order` posts from most ~tags to least ~tags!"
 
 **Searched Tags:** `~fluffy ~uwu ~heart_gesture`
 
@@ -474,6 +484,7 @@ The reason? Take a look at this `--bar` chart:
 
 That's more like it! Plenty of tags related to fluffy and non-fluffy cuteness :3
 
+---
 ### Example 9: Order (and download) posts ranked by relevancy to tags I like
 >**Q**: "I want to find the posts with Loona that have the most gloriously-detailed backgrounds."
 >
@@ -522,7 +533,7 @@ When we give Fuzzy Search the `--order "Detailed Background"` argument, we're te
 
 The filename (minus the .txt part) is used as the name you give in the argument. To make your own custom category, copy this file and fill it with tags related to whatever you're interested in (perhaps use `--recommended` to find similar tags *wink-wink nudge-nudge*).
 
-See [Input](docs/Input.md) for more detail on how custom categories work.
+See [Input](Input.md) for more detail on how custom categories work.
 
 ---
 **Why don't you add `detailed_background` to filter the posts?** 
@@ -546,10 +557,11 @@ Lets say you want to prune that list of 1,000 posts a little more. You recognize
 	- If you're doing this on E6, you're boned.
 	- If you're doing this on Fuzzy Search, you can at least order posts by number of ~tags (`--order "~"`)... which is actually a custom category under the hood. So you may as well bite the pillow and make a proper "Detailed Background" custom category filled with the ~tags you used.
 
+---
 ### Example 10: How many posts should I download with `--top`?
 > **Q**: "I set up a custom category in Fuzzy Search and sorted a bunch of posts (using `--order`) , but I can't decide how many of those posts to download!"
 > 
-> **A**: "Download as many post as you have the time to appreciate! If you're still unsure, you may also appreciate some more charts :)"
+> **A**: "Download as many post as you have the time to appreciate! If you're still unsure, you may also appreciate these charts :)"
 
 **Searched Tags:**  `loona_(helluva_boss)`
 
@@ -568,13 +580,14 @@ Here's a terse interpretation of Loona's posts, according to the below chart:
 
 If you want to get the most relevant posts in a search, use `--top` to gather the posts before the curve dives down a cliff. Based on the above chart, use `--top 5.0` to download the top 5% of posts that are jam-packed with background-related tags.
 
-Note: "Relevancy" is based on the number of times a post contains a tag related to a given custom category. The exact value depends on how you set up the custom category and what it's trying to measure. But the logic of bigger number = better usually holds.
+**Relevancy:** This value is based on the number of times a post contains a tag related to a given custom category. The exact value depends on how you set up the custom category and what it's trying to measure. But the logic of bigger number = better usually holds.
 
 ---
 Here's another percentile chart with a smoother curve. In this case there's no obvious cliff and the average relevancy is quite high. Based on that, you may elect to simply download all the posts in this search.
 
 ![Chart depicting percentile of Loona posts with detailed background elements.](/images/fs/percentile_alt.png)
 
+---
 ### Example 11: A 3-strikes blacklist
 >**Q**: "E6's blacklist hides too many posts, and keeping track of all the different logic/operators is complicated! There are tags that I *generally dislike* but that aren't that big a deal on their own."
 >
@@ -583,7 +596,7 @@ Here's another percentile chart with a smoother curve. In this case there's no o
 **E6's Blacklist**
 
 Those familiar with E6 will understand the blacklist as a "1-strike" policy: if a post contains ANY single blacklisted tag, then the post is hidden. This logic is binary, as either the post is hidden, or it's visible.
-- Fuzzy Search provides this in the form of `E6_Blacklist.txt` in the Settings folder (see the [Input](docs/Input.md) doc for more details).
+- Fuzzy Search provides this in the form of `E6_Blacklist.txt` in the Settings folder (see [Input](Input.md) for more details).
 
 **Fuzzy Search's Blacklist**
 
@@ -624,6 +637,7 @@ halloween -1.0
 
 With this custom category, a post with `skull realistic` will end up with a total weight of 1, and thus be hidden by `--blacklist 1.0`. Meanwhile, a post with `skull skeleton humor halloween` has it's weights add up to 0 , so it remains visible in the searched posts.
 
+---
 ### Example 12: How can I compare two artists?
 > **Q**: "I have two or more artists I'm interested in, but only have the time to download and sift through the posts of one of them. Which artist should I look at first?"
 > 
@@ -672,6 +686,7 @@ Here's some other tools Fuzzy Search provides:
 
 If you're ready to download posts, use `--url_only` to generate URLs to download. Make sure to add any desired `--blacklist/order/top` arguments at the same time you generate the URLs!
 
+---
 ### Example 13: Interactive Graphs: Obsidian
 > **Q**: "Fuzzy Search doesn't come with enough charts, I need more!"
 > 
@@ -684,7 +699,7 @@ If you're ready to download posts, use `--url_only` to generate URLs to download
 **Time to Process:** 0.07 seconds
 
 **Note:** `--graph 500`
-- This tells Fuzzy Search to generate graphs for searches with 500 or less posts. For performance reasons, try to limit Obsidian graphs to searches with no more than 1,000 posts. See the [Input](docs/Input.md) page for how to set up an Obsidian Vault from Fuzzy Search's output.
+- This tells Fuzzy Search to generate graphs for searches with 500 or less posts. For performance reasons, try to limit Obsidian graphs to searches with no more than 1,000 posts. See the [Input](Input.md) page for how to set up an Obsidian Vault from Fuzzy Search's output.
 
 ---
 Obsidian's graph view can help visualize the "sweet spot" for tags (green dots) to further analyze:

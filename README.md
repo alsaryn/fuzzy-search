@@ -80,7 +80,7 @@ Each folder contains analysis results for that search:
 ## Basic Usage
 
 ### Download Files
-1. Download and unzip Fuzzy Search's latest release
+1. Download and unzip Fuzzy Search's [latest release](https://github.com/alsaryn/fuzzy-search/releases)
 2. Download the latest E6 Database Export (you can easily find it with a browser search, the URL ends with `db_export`)
 	- Keep the export files in their compressed state!
 3. Place the following export files into Fuzzy Search's `Exports` folder:
@@ -125,7 +125,7 @@ python fuzzysearch.py --all
 
 On your first run, Fuzzy Search will parse the database export. It'll also create sample files as references of how to use Fuzzy Search's more complex functionality. Once Fuzzy Search is done with this process (it'll take several minutes!), browse the Tags Out folder for the sample analysis results!
 
-> [!CAUTION]
+> [!WARNING]
 > Fuzzy Search running slowly?
 > 
 > Don't worry, it happens on everyone's first time...
