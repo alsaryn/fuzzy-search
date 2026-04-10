@@ -82,7 +82,7 @@ Each folder contains analysis results for that search:
 ### Download Files
 1. Download and unzip Fuzzy Search's [latest release](https://github.com/alsaryn/fuzzy-search/releases)
 2. Download the latest E6 Database Export (you can easily find it with a browser search, the URL ends with `db_export`)
-	- Keep the export files in their compressed state!
+	- Leave the export files in their compressed state!
 3. Place the following export files into Fuzzy Search's `Exports` folder:
 	- posts-YYYY-MM-DD.csz.gz
 	- tags-YYYY-MM-DD.csz.gz
@@ -153,7 +153,7 @@ The following documents go into greater detail on the various aspects of Fuzzy S
 	- Post Data
 	- Post Data (URLs)
 	- Tag Counts
-	- Similar/Recommended Tags
+	- Recommended Tags
 - Charts
 	- Bar Charts
 	- Percentile

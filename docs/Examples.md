@@ -496,7 +496,7 @@ That's more like it! Plenty of tags related to fluffy and non-fluffy cuteness :3
 
 **Time to Process:** 1.18 seconds
 
-This command first finds all the posts with `loona_(helluva_boss)` and sorts each post by the amount of background-related tags. It then grabs the top 20% of sorted posts (meaning the ones with the most background-related tags) and generates a file of URLs. This file (except below) is ready to be processed Fuzzy Search's `postdownloader.py`.
+This command first finds all the posts with `loona_(helluva_boss)` and sorts each post by the amount of background-related tags. It then grabs the top 20% of sorted posts (meaning the ones with the most background-related tags) and generates a file of URLs. This file (except below) is ready to have it's posts downloaded with `--download`.
 
 ```text
 107432.png   https://static1(...)68a28f.png  0.8

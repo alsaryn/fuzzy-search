@@ -57,11 +57,11 @@ In order to get (up to) 300 posts ordered by score:
 - There's probably a handful of database accesses to find all the posts brought up by the search, order them by score, and get some other miscellaneous info.
 - There's then 300 database accesses to get the post info for all 300 posts.
 
-Altogether, E6 probably isn't using more than 400 accesses to the database to process any single page of search results. Meanwhile, Fuzzy Search's similar tags is looking at 2,500 additional accesses--one for each unique tag that is being ranked. Even a "small" example like the 36 posts of `propane_tank` has 400 (1,100 unique tags, 60% of which are pruned) additional database accesses. 
+Altogether, E6 probably isn't using more than 400 accesses to the database to process any single page of search results. Meanwhile, Fuzzy Search's recommended tags is looking at 2,500 additional accesses--one for each unique tag that is being ranked. Even a "small" example like the 36 posts of `propane_tank` has 400 (1,100 unique tags, 60% of which are pruned) additional database accesses. 
 
 **It Won't Fit!**
 
-In conclusion, adding Fuzzy Search-style similar tags to E6 search results adds too much load on the servers to be feasible. The computational cost is still too high even when being optimistic about the average search being small and heuristics/optimizations being found to solve individual steps of the process. These are the main obstacles that stick out to me:
+In conclusion, adding Fuzzy Search-style recommended tags to E6 search results adds too much load on the servers to be feasible. The computational cost is still too high even when being optimistic about the average search being small and heuristics/optimizations being found to solve individual steps of the process. These are the main obstacles that stick out to me:
 1. Iterating over every tag in every searched post to find the unique tags
 2. Applying `rec_tag_threshold` to reduce the set of unique tags
 3. Additional database accesses to determine "tag-search overlap" via lists of post ids when ranking the tags

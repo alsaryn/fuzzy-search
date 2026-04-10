@@ -56,9 +56,7 @@ cd FuzzySearch
 
 # Run Fuzzy Search's analysis tools (with all output enabled):
 python fuzzysearch.py --all
-
-# To run the post downloader (make sure you have URL files in th Posts folder):
-python postdownloader.py
+--data_dir /path/to/folder/
 ```
 
 ---
@@ -67,6 +65,15 @@ python postdownloader.py
 ```bash
 # Use the designated folder to store the Cache, Exports, Posts, Settings, Tags In, Tags Out, and Wiki folders
 --data_dir /path/to/folder/
+
+# Allow Fuzzy Search to place the results of new analysis of a previously-analyzed search into that search's existing folder.
+# By default, Fuzzy Search will skip doing analysis of searches that already have a folder associated with them.
+--override
+
+# Download posts from URL files in the Posts folder.
+--download
+# If you used --data_dir to generate the URL files, make sure to also use --data_dir when downloading the files.
+--download --data_dir /path/to/folder/
 ```
 
 ---
@@ -76,7 +83,7 @@ python postdownloader.py
 # Enable all analysis outputs
 --all
 
-# Similar Tags.txt
+# Recommended Tags.txt
 # Enable recommended/similar tags output
 --recommended
 
@@ -165,13 +172,6 @@ python postdownloader.py
 # Only include posts with the 'Safe' rating
 --rating "S"
 
-# UwU-ifies text.
-# Only affects runtime messages and post descriptions (--description).
-# Three levels of cursed text, for your pleasure.
---cursed
---curseder
---cursedest
-
 # Filter out posts with a custom category Blacklist relevancy higher than the threshold.
 # Note: The traditional strict blacklist is always applied in addition to the Blacklist custom category
 --blacklist <threshold>
@@ -203,6 +203,17 @@ python postdownloader.py
 --rec_tag_threshold 2
 ```
 
+---
+**Misc**
+```bash
+# UwU-ifies text.
+# Only affects runtime messages and post descriptions (--description).
+# Three levels of cursed text, for your pleasure.
+--cursed
+--curseder
+--cursedest
+```
+
 ## Downloading Posts
 Fuzzy Search's built-in post downloader, while configured to work with Fuzzy Search's output, is quite basic compared to dedicated batch downloaders.
 - If you are downloading tens of thousands of posts, consider using a dedicated downloader.
@@ -211,12 +222,8 @@ URL Format
 - The built-in downloader reads text files placed in Fuzzy Search's `Posts` folder.
 - The built-in downloader expects the files to be formatted via `--url_only --url_mode full`
 
-To run the downloader:
-
-```bash
-# Move into the folder with Fuzzy search's .py files, then run the following:
-python postdownloader.py
-```
+To run the downloader, use the `--download` argument.
+- If you used `--data_dir` to generate the URL files, make sure to also use `--data_dir `when downloading the files.
 
 The downloader will read each URL, download the post file, and output the post file (named after the E6 post id) in a folder (named after the URL file).
 

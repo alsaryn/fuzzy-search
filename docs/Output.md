@@ -5,7 +5,7 @@ Fuzzy Search has a variety of analyses it can perform, generating the following 
 	- Post Data
 	- Post Data (URLs)
 	- Tag Counts
-	- Similar/Recommended Tags
+	- Recommended Tags
 - Charts
 	- Bar Charts
 	- Percentile
@@ -183,7 +183,7 @@ Example category section:
 (...)
 ```
 
-### Similar Tags
+### Recommended Tags
 **Argument:** `--recommended`
 
 A ranked list of all unique tags in the searched posts (split by E6 category), ordered chiefly by:
