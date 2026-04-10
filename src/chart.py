@@ -1,4 +1,4 @@
-"""Generate matplotlib representations of data."""
+"""Generate matplotlib charts."""
 
 import pathlib
 import datetime
@@ -14,7 +14,58 @@ munits.registry[datetime.date] = converter
 munits.registry[datetime.datetime] = converter
 
 
-def generate_scatter_plot_single_category(
+def bar_chart(chart_title: str, filename: pathlib.Path, data: dict[str, int]) -> None:
+    """Generate bar chart, where each bar is a tag combination.
+
+    PARAMETERS
+        filename: filepath to save the resulting chart
+        data: each bar is an element of data
+            key = name (used as bar label)
+            value = # of instances of tag combination (used as bar length)
+    """
+    fig, ax = plt.subplots()
+    ax.set_facecolor("#deeafc")
+    ax.set_title(chart_title)
+    ax.set_xlabel("Tag")
+    ax.set_ylabel("% of Posts")
+
+    width = 0.6
+    bar_container = ax.bar(data.keys(), data.values(), width)
+    ax.bar_label(bar_container, labels=data.keys(), label_type="edge", rotation=45.0)
+
+    # remove x-axis labels
+    ax.set_xticklabels([])
+    ax.set_yticks(np.arange(0.0, 1.01, 0.2))
+
+    fig.savefig(filename, facecolor="#adbed9", bbox_inches="tight", pad_inches=0)
+    plt.close(fig)
+
+
+def scatter_post_score(
+    chart_title: str, filename: pathlib.Path, x_data, y_data: list, x_label: str
+) -> None:
+    """Generate scatter plot, where each point is a post.
+
+    PARAMETERS
+        filename: filepath to save the resulting chart
+        x_data: post upload date or #tags (set x_label accordingly)
+        y_data: post score
+    """
+    fig, ax = plt.subplots()
+    ax.set_facecolor("#deeafc")
+    ax.set_title(chart_title)
+    ax.set_xlabel(x_label)
+    ax.set_ylabel("Score")
+
+    ax.scatter(x_data, y_data, c="tab:blue", alpha=0.5, edgecolors="none")
+
+    ax.grid(True)
+
+    fig.savefig(filename, facecolor="#adbed9", bbox_inches="tight", pad_inches=0)
+    plt.close(fig)
+
+
+def scatter_custom_category(
     chart_title: str,
     filename: pathlib.Path,
     chart_legend: str,
@@ -23,28 +74,22 @@ def generate_scatter_plot_single_category(
 ) -> None:
     """Generate scatter plot, where each point is a post.
 
+    Plots a SINGLE custom category.
+
     PARAMETERS
-        filename: Filepath to save the resulting chart.
+        filename: filepath to save the resulting chart.
         chart_legend: the name that appears for that category on the legend.
         color: the color to be displayed on chart for that category.
         y_data: tally of the post's tags matching a given custom category.
+
+    NOTES
         x data is calculated inside this function.
     """
     fig, ax = plt.subplots()
-    # A dark grey
-    # ax.set_facecolor("#4c6185")
-    # A light grey
-    # ax.set_facecolor("#adbed9")
-    # a dark white
-    # ax.set_facecolor("#bacae3")
-    # A light white
     ax.set_facecolor("#deeafc")
     ax.set_title(chart_title)
     ax.set_xlabel("Percentile")
     ax.set_ylabel("Relevancy")
-
-    # Default size is 6.4 x 4.8
-    # fig.set_size_inches(10, 10)
 
     # Sort y data
     y = sorted(y_data, reverse=False)
@@ -63,77 +108,11 @@ def generate_scatter_plot_single_category(
     ax.legend(loc="upper right")
     ax.grid(True)
 
-    # fig.tight_layout()
     fig.savefig(filename, facecolor="#adbed9", bbox_inches="tight", pad_inches=0)
     plt.close(fig)
 
 
-def generate_scatter_plot_post_score(
-    chart_title: str, filename: pathlib.Path, x_data, y_data: list, x_label: str
-) -> None:
-    """Generate scatter plot, where each point is a post.
-
-    PARAMETERS
-        x_data: post upload date
-        y_data: post score
-    """
-    fig, ax = plt.subplots()
-    # A dark grey
-    # ax.set_facecolor("#4c6185")
-    # A light grey
-    # ax.set_facecolor("#adbed9")
-    # a dark white
-    # ax.set_facecolor("#bacae3")
-    # A light white
-    ax.set_facecolor("#deeafc")
-    ax.set_title(chart_title)
-    ax.set_xlabel(x_label)
-    ax.set_ylabel("Score")
-
-    # Default size is 6.4 x 4.8
-    # fig.set_size_inches(10, 10)
-
-    ax.scatter(x_data, y_data, c="tab:blue", alpha=0.5, edgecolors="none")
-
-    # ax.legend(loc="upper right")
-    ax.grid(True)
-
-    # fig.tight_layout()
-    fig.savefig(filename, facecolor="#adbed9", bbox_inches="tight", pad_inches=0)
-    plt.close(fig)
-
-
-def generate_bar_chart(
-    chart_title: str, filename: pathlib.Path, data: dict[str, int]
-) -> None:
-    """Generate bar chart, where each bar is a tag.
-
-    PARAMETERS
-        filename: Filepath to save the resulting chart.
-        Data: each bar is an element of data,
-         key = name
-         value = bar length
-    """
-    fig, ax = plt.subplots()
-    ax.set_facecolor("#deeafc")
-    ax.set_title(chart_title)
-    ax.set_xlabel("Tag")
-    ax.set_ylabel("% of Posts")
-
-    width = 0.6
-    bar_container = ax.bar(data.keys(), data.values(), width)
-    ax.bar_label(bar_container, labels=data.keys(), label_type="edge", rotation=45.0)
-
-    # remove x-axis labels
-    ax.set_xticklabels([])
-    ax.set_yticks(np.arange(0.0, 1.01, 0.2))
-
-    # fig.tight_layout()
-    fig.savefig(filename, facecolor="#adbed9", bbox_inches="tight", pad_inches=0)
-    plt.close(fig)
-
-
-def generate_scatter_plot_all_custom_categories(
+def scatter_custom_categories(
     chart_title: str,
     filename: pathlib.Path,
     category_to_chart_legend: dict,
@@ -141,33 +120,23 @@ def generate_scatter_plot_all_custom_categories(
     category_to_y_data: dict,
     x_data: list,
 ) -> None:
-    """Generate scatter plot, where each point is a post (multiple categories).
+    """Generate scatter plot, where each point is a post.
+
+    Plots ALL custom categories.
 
     PARAMETERS
-        filename: Filepath to save the resulting chart.
+        filename: filepath to save the resulting chart.
         category_to_chart_legend: maps category to the legend string.
-          We plot the categories in the same order as they appear in the legend map.
+            Plots the categories in the same order as they appear in the legend map.
         category_to_color: maps category to it's color on the chart.
-        category_to_data: maps category to the dict of "x" and "y" datapoints.
-         Each datapoint is a single post.
-         y = tally of general tags in a given m2 category.
-         x = post upload date.
+        category_to_y_data: maps category to the list of post weights.
+        x_date: post upload date (shared by all categories)
     """
     fig, ax = plt.subplots()
-    # A dark grey
-    # ax.set_facecolor("#4c6185")
-    # A light grey
-    # ax.set_facecolor("#adbed9")
-    # a dark white
-    # ax.set_facecolor("#bacae3")
-    # A light white
     ax.set_facecolor("#deeafc")
     ax.set_title(chart_title)
     ax.set_xlabel("Year")
     ax.set_ylabel("Relevancy")
-
-    # Default size is 6.4 x 4.8
-    # fig.set_size_inches(10, 10)
 
     for category in category_to_chart_legend.keys():
         x = x_data
@@ -180,11 +149,9 @@ def generate_scatter_plot_all_custom_categories(
             alpha=0.5,
             edgecolors="none",
         )
-        # ax.set_title(chart_title)
 
     ax.legend(loc="upper right")
     ax.grid(True)
 
-    # fig.tight_layout()
     fig.savefig(filename, facecolor="#adbed9", bbox_inches="tight", pad_inches=0)
     plt.close(fig)

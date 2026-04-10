@@ -1,4 +1,4 @@
-"""Main driver for Fuzzy Search. By Keerek."""
+"""Main driver for Fuzzy Search."""
 
 import traceback
 import argparse
@@ -9,18 +9,30 @@ import threading
 
 import util
 import cache
-import tag
-import progressbar
+import search
+import postdownloader
+from progressbar import progressbar
+from utilfilepath import filepath
+from utiltext import translate
+from utiloptions import options
 
 if __name__ == "__main__":
-    # Start a progress bar on a separate thread from the main program
-
     # Initialize the parser
     parser = argparse.ArgumentParser(description="Analyze tag-based data.")
 
     # General Arguments
     parser.add_argument(
         "--data_dir", type=str, default=0, help="Set data/ directory (default: CWD)."
+    )
+    parser.add_argument(
+        "--download",
+        action="store_true",
+        help="Download posts in --data_dir. Overrides analysis options.",
+    )
+    parser.add_argument(
+        "--override",
+        action="store_true",
+        help="Override old analysis results with new results.",
     )
 
     # Toggle Analysis Output
@@ -157,13 +169,13 @@ if __name__ == "__main__":
         "--blacklist",
         type=float,
         default=0.0,
-        help="Filter out posts with a custom category Blacklist score higher than num.",
+        help="Hide posts with a Blacklist relevancy greater or equal num.",
     )
     parser.add_argument(
         "--order",
         type=str,
         default="",
-        help="Order posts by custom category score (default: creation date).",
+        help="Order posts by custom category relevancy (default: creation date).",
     )
     parser.add_argument(
         "--ascending",
@@ -174,19 +186,19 @@ if __name__ == "__main__":
         "--top",
         type=float,
         default=100.0,
-        help="Keep only the first (top) percent posts.",
+        help="Keep only the first (top) percent of sorted posts.",
     )
     parser.add_argument(
         "--rec_tag_threshold",
-        type=int,
-        default=2,
-        help="Similar Tags: omit the bottom % of tags (values: 0-100) (default: 2%).",
+        type=float,
+        default=2.0,
+        help="--recommended: omit the bottom % of tags (default: 2.0%).",
     )
 
     # argparse will print a message and exit with invalid input or with --help
     args = parser.parse_args()
 
-    # Determine /data/ directory.
+    # [--- Data Directory ---]
     # Prefer "data_dir" argument. Defaults to CWD
     if args.data_dir:
         try:
@@ -200,51 +212,54 @@ if __name__ == "__main__":
     else:
         root_dir = pathlib.Path(os.getcwd())
     # Find (and set up, if needed) the data directory.
-    util.set_root(root_dir)
-    util.ensure_dirs_exist()
+    filepath.set_root(root_dir)
 
-    # Handle valid posts
-    util.Options.rating = str(args.rating).upper()
-    util.Options.score_min = args.score_min
-    util.Options.score_max = args.score_max
-
-    # Toggle Output
+    # [--- Output Toggles ---]
     if args.all:
-        util.Options.recommended = True
-        util.Options.posts = True
-        util.Options.counts = True
-        util.Options.counts_custom = True
-        util.Options.charts_custom = True
-        util.Options.bar_charts = True
-        util.Options.score = True
-        util.Options.url = True
-        util.Options.source = True
-        util.Options.description = True
-        util.Options.duration = True
+        options.recommended = True
+        options.posts = True
+        options.counts = True
+        options.counts_custom = True
+        options.charts_custom = True
+        options.bar_charts = True
+        options.score = True
+        options.url = True
+        options.source = True
+        options.description = True
+        options.duration = True
     else:
-        util.Options.recommended = args.recommended
-        util.Options.posts = args.posts
-        util.Options.counts = args.counts
-        util.Options.counts_custom = args.counts_custom
-        util.Options.charts_custom = args.charts_custom
-        util.Options.bar_charts = args.bar
-        util.Options.score = args.score
-        util.Options.url = args.url
-        util.Options.source = args.source
-        util.Options.description = args.description
-        util.Options.duration = args.duration
-    # Some options override 'all'
-    util.Options.graph = args.graph
+        options.recommended = args.recommended
+        options.posts = args.posts
+        options.counts = args.counts
+        options.counts_custom = args.counts_custom
+        options.charts_custom = args.charts_custom
+        options.bar_charts = args.bar
+        options.score = args.score
+        options.url = args.url
+        options.source = args.source
+        options.description = args.description
+        options.duration = args.duration
 
-    util.Options.max_query_size = args.max_posts
-    util.Options.percent_posts_to_keep = args.top
+    # [--- Filter/Misc Options ---]
+    options.override = args.override
+    options.graph = args.graph
+    options.rating = str(args.rating).upper()
+    options.score_min = args.score_min
+    options.score_max = args.score_max
+    options.max_query_size = args.max_posts
+    options.percent_posts_to_keep = args.top
+    options.start_date = args.start_date
+    options.end_date = args.end_date
+    options.blacklist_score_threshold = args.blacklist
+    options.order = args.order
+    options.descending = not args.ascending
+    options.recommended_tag_threshold = args.rec_tag_threshold
 
     # Only check for URL options if url output is enabled
-    # if not util.Options.url:
-    util.Options.url_only = args.url_only
+    options.url_only = args.url_only
     if args.url_mode:
         if args.url_mode in ["md5", "url", "full"]:
-            util.Options.url_mode = args.url_mode
+            options.url_mode = args.url_mode
         # Error out if mode is not a valid string
         else:
             print("Error: Unrecognized url_mode argument. Valid modes:")
@@ -253,24 +268,15 @@ if __name__ == "__main__":
             print("  full")
             sys.exit(0)
 
-    util.Options.start_date = args.start_date
-    util.Options.end_date = args.end_date
-
-    util.Options.blacklist_score_threshold = args.blacklist
-    util.Options.order = args.order
-    util.Options.descending = not args.ascending
-
-    util.Options.recommended_tag_threshold = args.rec_tag_threshold
-
     # Apply the highest level curse specified
     if args.cursedest:
-        util.set_curse_level(3)
+        translate.set_curse_level(3)
     elif args.curseder:
-        util.set_curse_level(2)
+        translate.set_curse_level(2)
     elif args.cursed:
-        util.set_curse_level(1)
+        translate.set_curse_level(1)
     else:
-        util.set_curse_level(0)
+        translate.set_curse_level(0)
 
     # Start a thread to print progress reports wile program is running
     t = threading.Thread(target=progressbar.start_progress_bar)
@@ -278,23 +284,31 @@ if __name__ == "__main__":
 
     # Perform tag analysis
     try:
-        # Ensure cache exists
-        cache.generate_missing_cache()
-        # Process queries in input/
-        tag.read_in_query_list()
+        if args.download:
+            # postdownloader has its own progress bar
+            progressbar.end_progress_bar()
 
+            # offline_test_mode: Enable during testing
+            postdownloader.download_posts(offline_test_mode=False)
+        else:
+            # Ensure cache exists
+            cache.generate_missing_cache()
+            # Process queries in Tags In/
+            search.read_and_process_queries()
+
+    # Handle general errors
     except util.ExportFileNotFound as e:
         print(f"\n{e.message}")
         print(
             " Did you place the following zipped export files into "
-            f"{util.Filepath.export_dir}?"
+            f"{filepath.export_dir}?"
         )
         print("    posts-YYYY-MM-DD.csv.gz")
         print("    tags-YYYY-MM-DD.csv.gz")
         print("    wiki_pages-YYYY-MM-DD.csv.gz")
     except util.CacheFileNotFound as e:
         print(f"\n{e.message}")
-        print(" Please re-run the program to generate the missing cache file")
+        print(" Please re-run the program to generate the missing cache file.")
     except util.FileNotFound as e:
         print(f"\n{e.message}")
         print(" This is most likely a result of missing user-made files.")
@@ -302,10 +316,10 @@ if __name__ == "__main__":
     except util.InvalidCustomCategory as e:
         print(f"\n{e.message}")
         print(" Ensure the category exists in the following files:")
-        print(f"   {util.Filepath.custom_categories}")
-        print(f"   {util.Filepath.custom_categories_colors}")
+        print(f"   {filepath.custom_categories}")
+        print(f"   {filepath.custom_categories_colors}")
         print(
-            " You can also delete the custom_settings folder,"
+            " You can also delete the Settings folder,"
             " run the program again, then study the sample files."
         )
     except Exception as e:
