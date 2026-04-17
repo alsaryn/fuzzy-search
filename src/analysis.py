@@ -28,11 +28,11 @@ def analyze_single_query(
     if options.posts:
         save_post_tags(output_dir, post_list, query_stats)
     if options.source:
-        save_post_sources(output_dir, post_ids)
+        save_post_sources(output_dir, post_list)
     if options.description:
-        save_post_descriptions(output_dir, post_ids)
+        save_post_descriptions(output_dir, post_list)
     if options.duration:
-        save_post_durations(output_dir, post_ids)
+        save_post_durations(output_dir, post_list)
     # File URLS
     if options.url:
         process_tags_url(output_dir, post_list)
@@ -117,7 +117,7 @@ def save_post_tags(
             out_file.write(content)
 
 
-def save_post_sources(output_dir: pathlib.Path, post_ids: set[int]):
+def save_post_sources(output_dir: pathlib.Path, post_list: list[util.PostData]):
     """Write out individual/per-post data (primarily sources) to markdown."""
     if not filepath.cache_post_data_sources.exists():
         raise (
@@ -133,17 +133,17 @@ def save_post_sources(output_dir: pathlib.Path, post_ids: set[int]):
     with open(
         output_dir / filepath.per_post_sources, "wt", encoding="utf-8"
     ) as out_file:
-        for post_id in post_ids:
-            cur.execute("SELECT source FROM posts WHERE postid = ?", (post_id,))
+        for post in post_list:
+            cur.execute(  "SELECT source FROM posts WHERE postid = ?",(post.post_id,))
             # Sources are stored as a newline-delimited string
-            content = f"#### {post_id}\n"
+            content = f"#### {post.post_id}\n"
             for source in cur.fetchone()[0].split("\n"):
                 content += f"{source}\n"
             content += "\n"
             out_file.write(content)
 
 
-def save_post_descriptions(output_dir: pathlib.Path, post_ids: set[int]):
+def save_post_descriptions(output_dir: pathlib.Path, post_list: list[util.PostData]):
     """Write out individual/per-post data (primarily descriptions) to markdown."""
     if not filepath.cache_post_data_descriptions.exists():
         raise (
@@ -159,14 +159,15 @@ def save_post_descriptions(output_dir: pathlib.Path, post_ids: set[int]):
     with open(
         output_dir / filepath.per_post_descriptions, "wt", encoding="utf-8"
     ) as out_file:
-        for post_id in post_ids:
-            cur.execute("SELECT description FROM posts WHERE postid = ?", (post_id,))
+        for post in post_list:
+            cur.execute("SELECT description FROM posts WHERE postid = ?",
+                        (post.post_id,))
             # Descriptions are stored as a single string
-            content = f"#### {post_id}\n{cur.fetchone()[0]}\n\n"
+            content = f"#### {post.post_id}\n{cur.fetchone()[0]}\n\n"
             out_file.write(translate.text(content))
 
 
-def save_post_durations(output_dir: pathlib.Path, post_ids: set[int]):
+def save_post_durations(output_dir: pathlib.Path, post_list: list[util.PostData]):
     """Write out individual/per-post data (primarily durations) to markdown."""
     if not filepath.cache_post_data_durations.exists():
         raise (
@@ -182,8 +183,8 @@ def save_post_durations(output_dir: pathlib.Path, post_ids: set[int]):
     with open(
         output_dir / filepath.per_post_durations, "wt", encoding="utf-8"
     ) as out_file:
-        for post_id in post_ids:
-            cur.execute("SELECT duration FROM posts WHERE postid = ?", (post_id,))
+        for post in post_list:
+            cur.execute("SELECT duration FROM posts WHERE postid = ?", (post.post_id,))
             # Durations are stored as a float.
             # If the duration is zero or not-applicable,
             # then there is no entry in the database.
@@ -207,10 +208,10 @@ def save_post_durations(output_dir: pathlib.Path, post_ids: set[int]):
                     minutes = str(minutes).rjust(2, " ")
                     # Add a leading 0 to seconds
                     seconds = str(seconds).rjust(2, "0")
-                    out_file.write(f"#### {post_id}\n {minutes}:{seconds}\n")
+                    out_file.write(f"#### {post.post_id}\n {minutes}:{seconds}\n")
                 else:
                     seconds = str(seconds).rjust(5, " ")
-                    out_file.write(f"#### {post_id}\n {seconds}\n")
+                    out_file.write(f"#### {post.post_id}\n {seconds}\n")
 
 
 def process_tags_url(output_dir: pathlib.Path, post_list: list[util.PostData]) -> None:
